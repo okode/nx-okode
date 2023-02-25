@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "sonar",
+  "version": "0.0.1",
+  "generators": {
+    "setup-sonar": {
+      "factory": "./src/generators/setup-sonar/generator",
+      "schema": "./src/generators/setup-sonar/schema.json",
+      "description": "Setup sonar generator"
+    }
+  }
+}

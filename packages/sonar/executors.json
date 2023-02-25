@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "executors": {
+    "sonar": {
+      "implementation": "./src/executors/sonar/executor",
+      "schema": "./src/executors/sonar/schema.json",
+      "description": "Sonar executor"
+    }
+  }
+}

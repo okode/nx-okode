@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "cli": "nx",
+  "title": "Sonar executor",
+  "description": "Scans a project with Sonar",
+  "type": "object",
+  "properties": {
+    "hostUrl": {
+      "description": "Sonar server URL",
+      "type": "string"
+    },
+    "config": {
+      "description": "Sonar scanner options. Check https://docs.sonarqube.org/latest/analyzing-source-code/analysis-parameters/",
+      "type": "object"
+    },
+    "autoSourcesDetection": {
+      "description": "Enables automatic sources/dependencies detection for the app",
+      "type": "boolean",
+      "default": true
+    },
+    "skipImplicitDeps": {
+      "description": "When `autoSourcesDetection` is `true`, this skips adding implicit dependencies to the project analysis",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": ["hostUrl", "config"]
+}

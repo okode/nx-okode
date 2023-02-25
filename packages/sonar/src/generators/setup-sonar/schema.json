@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "$id": "Sonar",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The name of the application to generate the Sonar configuration for.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What app would you like to generate a Sonar configuration for?",
+      "x-dropdown": "projects"
+    },
+    "hostUrl": {
+      "type": "string",
+      "description": "Sonar server URL",
+      "x-prompt": "What is the host url for the Sonar server?"
+    },
+    "projectKey": {
+      "type": "string",
+      "description": "Sonar project key",
+      "x-prompt": "What is the Sonar project key?"
+    },
+    "projectName": {
+      "type": "string",
+      "description": "Sonar project name",
+      "x-prompt": "What is the Sonar project name?"
+    }
+  },
+  "required": ["project"]
+}
