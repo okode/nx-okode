@@ -8,7 +8,7 @@ import {
   TargetConfiguration,
 } from 'nx/src/devkit-exports';
 import { SonarExecutorSchema } from './schema';
-import sonarScanner from 'sonarqube-scanner';
+import * as sonarScanner from 'sonarqube-scanner';
 
 export interface WorkspaceDependency {
   name: string;
@@ -19,12 +19,12 @@ export interface WorkspaceDependency {
 }
 
 export interface AppInfo {
-  appDeps: WorkspaceDependency[];
-  sources: string[];
+  workspaceDependencies: WorkspaceDependency[];
+  workspaceSources: string[];
 }
 
 export default async function runExecutor(options: SonarExecutorSchema, context: ExecutorContext) {
-  logger.log('Executor ran for Build', options);
+  logger.log('Executor ran for Sonar', options);
   let success = true;
   try {
     await scan(options, context);
@@ -32,23 +32,22 @@ export default async function runExecutor(options: SonarExecutorSchema, context:
     logger.error(`The Sonar scan failed for project '${context.projectName}'. Error: ${e}`);
     success = false;
   }
-  return {
-    success,
-  };
+  return { success };
 }
 
 async function scan(options: SonarExecutorSchema, context: ExecutorContext) {
-  logger.log(`Scanning project '${context.projectName}' with opts:`, options);
+  logger.log(`Scanning project '${context.projectName}' with Sonar`);
+  logger.debug(`Scanning project '${context.projectName}' with Sonar and opts:`, options)
 
   let scannerOptions = options.config;
   if (options.autoSourcesDetection) {
-    logger.log(`Auto detecting app dependencies`);
-    const appInfo = await getExecutedAppInfo(options, context);
+    logger.log(`Analyzing app dependencies to detect dependencies...`);
+    const appInfo = await getExecutedAppInfo(context, { skipImplicitDeps: options.skipImplicitDeps });
     logger.debug('App info:', appInfo);
     scannerOptions = mergeScannerOptsWithAppInfo(scannerOptions, appInfo);
   }
 
-  logger.log('Scanner config', options.hostUrl, scannerOptions);
+  logger.debug('Sonar scanner config', options.hostUrl, scannerOptions);
 
   await sonarScanner.async({
     serverUrl: options.hostUrl,
@@ -57,24 +56,19 @@ async function scan(options: SonarExecutorSchema, context: ExecutorContext) {
 }
 
 async function getExecutedAppInfo(
-  options: SonarExecutorSchema,
-  context: ExecutorContext
+  context: ExecutorContext,
+  options: { skipImplicitDeps: boolean }
 ): Promise<AppInfo> {
-  const appDeps = await getExecutedAppDependencies(context, {
-    skipImplicitDeps: options.skipImplicitDeps,
-  });
-  const sources = appDeps.map(d => d.sourceRoot);
-  return {
-    appDeps,
-    sources,
-  };
+  const workspaceDependencies = await getExecutedAppWorkspaceDependencies(context, options);
+  const workspaceSources = workspaceDependencies.map(d => d.sourceRoot);
+  return { workspaceDependencies, workspaceSources };
 }
 
-async function getExecutedAppDependencies(
+async function getExecutedAppWorkspaceDependencies(
   context: ExecutorContext,
   options: { skipImplicitDeps: boolean }
 ) {
-  const appDependencies = (await getDependenciesByAppName(context.projectName)).filter(
+  const appDependencies = (await getWorkspaceDependenciesByAppName(context.projectName)).filter(
     d => !(options.skipImplicitDeps && d.type === DependencyType.implicit)
   );
   const projectConfiguration = context.workspace.projects[context.projectName];
@@ -90,7 +84,7 @@ async function getExecutedAppDependencies(
   ];
 }
 
-async function getDependenciesByAppName(appName: string) {
+async function getWorkspaceDependenciesByAppName(appName: string) {
   let projectGraph: ProjectGraph;
   try {
     projectGraph = readCachedProjectGraph();
@@ -98,12 +92,12 @@ async function getDependenciesByAppName(appName: string) {
     projectGraph = await createProjectGraphAsync();
   }
 
-  const target = collectDependencies(projectGraph, appName);
+  const target = collectWorkspaceDependenciesByModule(projectGraph, appName);
 
   return Array.from(target.values());
 }
 
-function collectDependencies(
+function collectWorkspaceDependenciesByModule(
   projectGraph: ProjectGraph,
   moduleName: string
 ): Map<string, WorkspaceDependency> {
@@ -125,7 +119,7 @@ function collectDependencies(
       testTarget: projectGraph.nodes[d.target].data.targets.test,
     });
 
-    const deps = collectDependencies(projectGraph, d.target);
+    const deps = collectWorkspaceDependenciesByModule(projectGraph, d.target);
 
     deps.forEach((libs, target) => {
       workspaceModuleDependencies.set(target, libs);
@@ -137,32 +131,33 @@ function collectDependencies(
 
 function mergeScannerOptsWithAppInfo(scannerOptions: Record<string, string>, appInfo: AppInfo) {
   const newScannerOpts = { ...scannerOptions };
-  newScannerOpts['sonar.sources'] = `${appInfo.sources}${
+  newScannerOpts['sonar.sources'] = `${appInfo.workspaceSources}${
     newScannerOpts['sonar.sources'] ? `,${newScannerOpts['sonar.sources']}` : ''
   }`;
-  newScannerOpts['sonar.tests'] = `${appInfo.sources}${
+  newScannerOpts['sonar.tests'] = `${appInfo.workspaceSources}${
     newScannerOpts['sonar.tests'] ? `,${newScannerOpts['sonar.tests']}` : ''
   }`;
 
-  return transformScannerOptions(newScannerOpts, appInfo);
+  return expandScannerOptions(newScannerOpts, appInfo);
 }
 
-function transformScannerOptions(scannerOptions: Record<string, string>, appInfo: AppInfo) {
-  const newScannerOpts = { ...scannerOptions };
-  Object.entries(newScannerOpts).forEach(([optionKey, optionRawValue]) => {
-    const optionValues = optionRawValue.split(',');
-    const transformedScannerOption = optionValues
+function expandScannerOptions(scannerOptions: Record<string, string>, appInfo: AppInfo) {
+  return Object.entries(scannerOptions).reduce((newScannerOpts, [optionKey, optionRawValue]) => {
+    const optionRawValues = optionRawValue.split(',');
+    newScannerOpts[optionKey] = optionRawValues
       .map(optionValue => {
+        // Expand each scanner option value
         const match = optionValue.match(/^\[(.*)\]$/);
         if (match && match[1]) {
           const matchedFilePath = match[1] ?? '';
-          const values = appInfo.appDeps.map(d => matchedFilePath.replace('{projectRoot}', d.root));
+          // Replace vars
+          const values = appInfo.workspaceDependencies
+            .map(d => matchedFilePath.replace('{projectRoot}', d.root));
           return values.join(',');
         }
         return optionValue;
       })
-      .join(',');
-    newScannerOpts[optionKey] = transformedScannerOption;
-  });
-  return newScannerOpts;
+      .join(',')
+    return newScannerOpts;
+  }, {});
 }
