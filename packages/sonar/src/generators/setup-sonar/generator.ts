@@ -29,22 +29,22 @@ function updateGitIgnore(tree: Tree): void {
 
 function updateProjectConfig(tree: Tree,
   options: SetupSonarGeneratorSchema): void {
-  const projectConfiguration = readProjectConfiguration(tree, options.name);
+  const projectConfiguration = readProjectConfiguration(tree, options.appName);
   if (projectConfiguration.targets.sonar) {
     throw new Error(
-      `Project "${options.name}" already has a "sonar" target configured`
+      `Project "${options.appName}" already has a "sonar" target configured`
     );
   } else {
     projectConfiguration.targets.sonar = {
       executor: '@okode/nx-sonar:scan',
       options: {
-        hostUrl: options.hostUrl,
+        hostUrl: options.sonarHostUrl,
         config: {
-          'sonar.projectKey': options.projectKey ?? '',
-          'sonar.projectName': options.projectName ?? '',
+          'sonar.projectKey': options.sonarProjectKey ?? '',
+          'sonar.projectName': options.sonarProjectName ?? '',
         }
       },
     };
-    updateProjectConfiguration(tree, options.name, projectConfiguration);
+    updateProjectConfiguration(tree, options.appName, projectConfiguration);
   }
 }

@@ -7,7 +7,7 @@ import {
   DependencyType,
   TargetConfiguration,
 } from 'nx/src/devkit-exports';
-import { SonarExecutorSchema } from './schema';
+import { ScanExecutorSchema } from './schema';
 import * as sonarScanner from 'sonarqube-scanner';
 
 export interface WorkspaceDependency {
@@ -23,7 +23,7 @@ export interface AppInfo {
   workspaceSources: string[];
 }
 
-export default async function runExecutor(options: SonarExecutorSchema, context: ExecutorContext) {
+export default async function runExecutor(options: ScanExecutorSchema, context: ExecutorContext) {
   logger.log('Executor ran for Sonar', options);
   let success = true;
   try {
@@ -35,7 +35,7 @@ export default async function runExecutor(options: SonarExecutorSchema, context:
   return { success };
 }
 
-async function scan(options: SonarExecutorSchema, context: ExecutorContext) {
+async function scan(options: ScanExecutorSchema, context: ExecutorContext) {
   logger.log(`Scanning project '${context.projectName}' with Sonar`);
   logger.debug(`Scanning project '${context.projectName}' with Sonar and opts:`, options)
 

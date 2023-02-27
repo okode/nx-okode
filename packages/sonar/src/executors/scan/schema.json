@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/schema",
   "version": 2,
   "cli": "nx",
-  "title": "Sonar executor",
+  "title": "Sonar scan executor",
   "description": "Scans a project with Sonar",
   "type": "object",
   "properties": {

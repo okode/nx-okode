@@ -2,7 +2,7 @@ import executor from './executor';
 import { ExecutorContext } from '@nrwl/devkit';
 import * as sonarScanner from 'sonarqube-scanner';
 
-describe('Sonar Executor', () => {
+describe('Sonar Scan Executor', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

@@ -6,10 +6,10 @@ describe('Setup sonar generator', () => {
   it('should generate target', async () => {
     const appTree = setupEmptyProject();
     await setupSonar(appTree, {
-      name: 'my-app',
-      hostUrl: 'sonar.url.com',
-      projectKey: 'my-app-key',
-      projectName: 'test'
+      appName: 'my-app',
+      sonarHostUrl: 'sonar.url.com',
+      sonarProjectKey: 'my-app-key',
+      sonarProjectName: 'test'
     });
     expect(
       readProjectConfiguration(appTree, 'my-app').targets.sonar
@@ -20,10 +20,10 @@ describe('Setup sonar generator', () => {
     const appTree = setupEmptyProject();
     appTree.write('.gitignore', '');
     await setupSonar(appTree, {
-      name: 'my-app',
-      hostUrl: 'sonar.url.com',
-      projectKey: 'my-app-key',
-      projectName: 'test'
+      appName: 'my-app',
+      sonarHostUrl: 'sonar.url.com',
+      sonarProjectKey: 'my-app-key',
+      sonarProjectName: 'test'
     });
     expect(appTree.read('.gitignore').toString()).toContain('.scannerwork');
   });

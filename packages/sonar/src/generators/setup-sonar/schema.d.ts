@@ -1,6 +1,6 @@
 export interface SetupSonarGeneratorSchema {
-  name: string;
-  hostUrl?: string;
-  projectKey?: string;
-  projectName?: string;
+  appName: string;
+  sonarHostUrl?: string;
+  sonarProjectKey?: string;
+  sonarProjectName?: string;
 }

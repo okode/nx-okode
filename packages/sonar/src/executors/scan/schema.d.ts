@@ -1,4 +1,4 @@
-export interface SonarExecutorSchema {
+export interface ScanExecutorSchema {
   hostUrl: string;
   config: Record<string, string>;
   autoSourcesDetection?: boolean;
