@@ -5,6 +5,7 @@
   "sourceRoot": "e2e/sonar-e2e/src",
   "targets": {
     "e2e": {
+      "dependsOn": ["^build"],
       "executor": "@nrwl/nx-plugin:e2e",
       "options": {
         "target": "sonar:build",
