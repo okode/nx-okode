@@ -1,7 +1,4 @@
-import {
-  ExecutorContext,
-  logger,
-} from 'nx/src/devkit-exports';
+import { ExecutorContext, logger } from 'nx/src/devkit-exports';
 import { ScanExecutorSchema } from './schema';
 import * as sonarScanner from 'sonarqube-scanner';
 import { AppInfo, getExecutedAppInfo } from '@okode/nx-plugin-devkit';
@@ -20,13 +17,17 @@ export default async function runExecutor(options: ScanExecutorSchema, context: 
 
 async function scan(options: ScanExecutorSchema, context: ExecutorContext) {
   logger.log(`Scanning project '${context.projectName}' with Sonar`);
-  logger.debug(`Scanning project '${context.projectName}' with Sonar and opts:`, options)
+  if (options.verbose) {
+    logger.debug(`Scanning project '${context.projectName}' with Sonar and opts:`, options)
+  }
 
   let scannerOptions = options.config;
   if (options.autoSourcesDetection) {
     logger.log(`Analyzing app dependencies to detect dependencies...`);
     const appInfo = await getExecutedAppInfo(context, { skipImplicitDeps: options.skipImplicitDeps });
-    logger.debug('App info:', appInfo);
+    if (options.verbose) {
+      logger.debug('App info:', appInfo);
+    }
     scannerOptions = mergeScannerOptsWithAppInfo(scannerOptions, appInfo);
   }
 

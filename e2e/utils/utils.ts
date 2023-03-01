@@ -96,17 +96,17 @@ function runNxNewCommand(args?: string, silent?: boolean) {
 }
 
 function patchDistProjects(projs: ProjectDist[]): void {
-  for (const proj of projs) {
+  projs.forEach(proj => {
     const absDistPath = join(process.cwd(), proj.path);
     const absPackageJson = join(absDistPath, 'package.json');
     const packageJson = readJsonFile(absPackageJson);
     const packageDeps = packageJson?.dependencies ?? {};
-    for (const pkg of projs) {
+    projs.forEach(pkg => {
       const absDistPath = `file:/${join(process.cwd(), pkg.path)}`
       if (packageDeps[pkg.name] && packageDeps[pkg.name] !== absDistPath) {
         packageDeps[pkg.name] = absDistPath;
       }
-    }
+    });
     writeJsonFile(absPackageJson, { ...packageJson, dependencies: packageDeps })
-  }
+  });
 }

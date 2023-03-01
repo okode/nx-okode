@@ -3,4 +3,5 @@ export interface ScanExecutorSchema {
   config: Record<string, string>;
   autoSourcesDetection?: boolean;
   skipImplicitDeps?: boolean;
+  verbose?: boolean;
 }

@@ -23,6 +23,11 @@
       "description": "When `autoSourcesDetection` is `true`, this skips adding implicit dependencies to the project analysis",
       "type": "boolean",
       "default": false
+    },
+    "verbose": {
+      "description": "Enables verbose logging",
+      "type": "boolean",
+      "default": false
     }
   },
   "required": ["hostUrl", "config"]

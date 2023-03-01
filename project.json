@@ -8,7 +8,6 @@
         "syncVersions": true,
         "preset": "conventional",
         "skipProjectChangelog": true,
-        "postTargets": ["workspace:deploy"],
         "tagPrefix": ""
       }
     },
