@@ -1,58 +1,55 @@
 import {
-  ensureNxProject,
+  cleanup,
   readJson,
   runNxCommandAsync,
   uniq,
 } from '@nrwl/nx-plugin/testing';
+import { newProject } from '../../utils/utils';
 
 describe('sonar e2e', () => {
+  const appName = uniq('test');
+  const sonarHostUrl = 'http://localhost:9200';
+  const sonarProjKey = 'pkey';
+  const sonarProjName = 'pname';
   // Setting up individual workspaces per
   // test can cause e2e runs to take a long time.
   // For this reason, we recommend each suite only
   // consumes 1 workspace. The tests should each operate
   // on a unique project in the workspace, such that they
   // are not dependant on one another.
-  beforeAll(() => {
-    ensureNxProject('@nx-okode/sonar', 'dist/packages/sonar');
-  });
+  beforeAll(async () => {
+    newProject(
+      [
+        { name: '@okode/nx-sonar', path: 'dist/packages/sonar' },
+        { name: '@okode/nx-plugin-devkit', path: 'dist/packages/plugin-devkit' }
+      ],
+      ['@nrwl/react']
+    );
+    await runNxCommandAsync(`generate @nrwl/react:app ${appName} --routing=false`);
+    await runNxCommandAsync(`generate @okode/nx-sonar:setup ${appName} --sonarHostUrl ${sonarHostUrl} --sonarProjectKey ${sonarProjKey} --sonarProjectName ${sonarProjName}`);
+  }, 120000);
 
   afterAll(() => {
     // `nx reset` kills the daemon, and performs
     // some work which can help clean up e2e leftovers
     runNxCommandAsync('reset');
+    cleanup();
   });
 
-  it('should create sonar target for a project', async () => {
-    const project = uniq('sonar');
-    await runNxCommandAsync(`generate @okode/nx-sonar:setup-sonar ${project}`);
-    const result = await runNxCommandAsync(`sonar ${project}`);
+  it('should sonar target exist', () => {
+    const projectConfig = readJson(`apps/${appName}/project.json`);
+    expect(projectConfig.targets.sonar).toBeDefined();
+  });
+
+  it('should sonar target configured', () => {
+    const projectConfig = readJson(`apps/${appName}/project.json`);
+    expect(projectConfig.targets.sonar.options.hostUrl).toBe(sonarHostUrl);
+    expect(projectConfig.targets.sonar.options.config['sonar.projectKey']).toBe(sonarProjKey);
+    expect(projectConfig.targets.sonar.options.config['sonar.projectName']).toBe(sonarProjName);
+  });
+
+  it('should run sonar target', async () => {
+    const result = await runNxCommandAsync(`sonardd ${appName}`);
     expect(result.stdout).toContain('Executor ran');
   }, 120000);
-
-  describe('--hostUrl', () => {
-    it('should add hostUrl to the sonar target options', async () => {
-      const project = uniq('sonar');
-      await runNxCommandAsync(`generate @okode/nx-sonar:setup-sonar ${project} --hostUrl http://localhost:9200`);
-      const projectJson = readJson(`apps/${project}/project.json`);
-      expect(projectJson.targets['sonar'].options.hostUrl).toEqual('http://localhost:9200');
-    }, 120000);
-  });
-
-  describe('--projectKey', () => {
-    it('should add projectKey to the sonar target options', async () => {
-      const project = uniq('sonar');
-      await runNxCommandAsync(`generate @okode/nx-sonar:setup-sonar ${project} --projectKey sonarProjectKey`);
-      const projectJson = readJson(`apps/${project}/project.json`);
-      expect(projectJson.targets['sonar'].options.projectKey).toEqual('sonarProjectKey');
-    }, 120000);
-  });
-
-  describe('--projectName', () => {
-    it('should add projectName to the sonar target options', async () => {
-      const project = uniq('sonar');
-      await runNxCommandAsync(`generate @okode/nx-sonar:setup-sonar ${project} --projectName sonarProjectName`);
-      const projectJson = readJson(`apps/${project}/project.json`);
-      expect(projectJson.targets['sonar'].options.projectKey).toEqual('sonarProjectName');
-    }, 120000);
-  });
 });

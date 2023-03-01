@@ -2,7 +2,9 @@
   "name": "nx-okode",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "deploy-all": "nx run-many --target deploy --parallel 1"
+  },
   "private": true,
   "devDependencies": {
     "@nrwl/devkit": "15.7.2",
@@ -21,9 +23,11 @@
     "@typescript-eslint/parser": "^5.36.1",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
+    "fs-extra": "~11.1.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "jsonc-eslint-parser": "^2.1.0",
+    "ngx-deploy-npm": "~5.2.0",
     "nx": "15.7.2",
     "prettier": "^2.6.2",
     "sonarqube-scanner": "^3.0.1",

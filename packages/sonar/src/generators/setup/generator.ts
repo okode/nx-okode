@@ -20,8 +20,8 @@ function updateGitIgnore(tree: Tree): void {
 
   if (tree.exists(ignoreFile)) {
     let gitIgnore = tree.read('.gitignore').toString('utf-8');
-    if (!gitIgnore.includes('# Sonar (setup-sonar generator)')) {
-      gitIgnore += '\n# Sonar (setup-sonar generator)\n.scannerwork\n.sonar/';
+    if (!gitIgnore.includes('# Sonar (nx-sonar setup generator)')) {
+      gitIgnore += '\n# Sonar (nx-sonar setup generator)\n.scannerwork\n.sonar/';
       tree.write(ignoreFile, gitIgnore);
     }
   }

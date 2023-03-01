@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nx-okode/sonar": ["packages/sonar/src/index.ts"]
+      "@okode/nx-plugin-devkit": ["packages/plugin-devkit/src/index.ts"],
+      "@okode/nx-sonar": ["packages/sonar/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

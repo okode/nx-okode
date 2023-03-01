@@ -3,9 +3,9 @@
   "name": "sonar",
   "version": "0.0.1",
   "generators": {
-    "setup-sonar": {
-      "factory": "./src/generators/setup-sonar/generator",
-      "schema": "./src/generators/setup-sonar/schema.json",
+    "setup": {
+      "factory": "./src/generators/setup/generator",
+      "schema": "./src/generators/setup/schema.json",
       "description": "Setup sonar generator"
     }
   }
