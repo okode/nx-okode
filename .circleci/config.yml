@@ -23,11 +23,11 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          command: npx nx run-many lint
+          command: npx nx run-many --target lint
       - run:
-          command: npx nx run-many test
+          command: npx nx run-many --target test
       - run:
-          command: npx nx run-many e2e
+          command: npx nx run-many --target e2e
 
   deploy:
     executor: node/default
@@ -38,7 +38,7 @@ jobs:
       - run: ls -la
       - run: echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
       - run: npm whoami
-      - run: npm run deploy-all
+      - run: npx nx run workspace:deploy
 
 workflows:
   release:
