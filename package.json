@@ -1,12 +1,13 @@
 {
   "name": "nx-okode",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
-  "scripts": {
-    "deploy-all": "nx run-many --target deploy --parallel 1"
-  },
+  "scripts": {},
   "private": true,
   "devDependencies": {
+    "@commitlint/cli": "~17.0.0",
+    "@commitlint/config-conventional": "~17.0.0",
+    "@jscutlery/semver": "~2.30.1",
     "@nrwl/devkit": "15.7.2",
     "@nrwl/eslint-plugin-nx": "15.7.2",
     "@nrwl/jest": "15.7.2",
@@ -24,6 +25,7 @@
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
     "fs-extra": "~11.1.0",
+    "husky": "~8.0.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "jsonc-eslint-parser": "^2.1.0",
