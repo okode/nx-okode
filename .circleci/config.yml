@@ -41,17 +41,12 @@ jobs:
       - run: npx nx run workspace:deploy
 
 workflows:
-  release:
-    jobs:
-      - test:
-          << : *tags
-      - deploy:
-          << : *tags
-          requires:
-            - test
-
   default:
     jobs:
       - test:
           << : *shared
+      - deploy:
+          << : *tags
+          requires:
+            - test
 
