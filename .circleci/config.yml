@@ -2,6 +2,10 @@ version: 2.1
 
 shared: &shared
   context: org-global
+  filters:
+    tags:
+      only:
+        - /.*/
 
 tags: &tags
   context: org-global
