@@ -2,6 +2,18 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.3.0](https://github.com/okode/nx-okode/compare/0.2.0...0.3.0) (2023-03-01)
+
+
+### Features
+
+* project config ([19c39fd](https://github.com/okode/nx-okode/commit/19c39fd11edaf5b3a08fd12ea7463fd7a0040dc7))
+
+
+### Bug Fixes
+
+* circleci config for tags ([93b3f5c](https://github.com/okode/nx-okode/commit/93b3f5cececad73749687ae6d189543001fe3c26))
+
 ## [0.2.0](https://github.com/okode/nx-okode/compare/0.1.0...0.2.0) (2023-03-01)
 
 
