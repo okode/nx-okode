@@ -12,7 +12,7 @@
         "push": true
       }
     },
-    "deploy": {
+    "deploy-packages": {
       "executor": "nx:run-commands",
       "options": {
         "command": "nx run-many --target deploy --parallel 1"

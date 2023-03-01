@@ -42,7 +42,7 @@ jobs:
       - run: ls -la
       - run: echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
       - run: npm whoami
-      - run: npx nx run workspace:deploy
+      - run: npx nx run workspace:deploy-packages
 
 workflows:
   default:
