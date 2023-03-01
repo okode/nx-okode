@@ -8,7 +8,8 @@
         "syncVersions": true,
         "preset": "conventional",
         "skipProjectChangelog": true,
-        "tagPrefix": ""
+        "tagPrefix": "",
+        "push": true
       }
     },
     "deploy": {
