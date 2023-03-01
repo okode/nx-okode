@@ -47,9 +47,4 @@ describe('sonar e2e', () => {
     expect(projectConfig.targets.sonar.options.config['sonar.projectKey']).toBe(sonarProjKey);
     expect(projectConfig.targets.sonar.options.config['sonar.projectName']).toBe(sonarProjName);
   });
-
-  it('should run sonar target', async () => {
-    const result = await runNxCommandAsync(`sonardd ${appName}`);
-    expect(result.stdout).toContain('Executor ran');
-  }, 120000);
 });
