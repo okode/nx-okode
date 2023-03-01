@@ -4,7 +4,7 @@ import {
   runNxCommandAsync,
   uniq,
 } from '@nrwl/nx-plugin/testing';
-import { newProject } from '../../utils/utils';
+import { newProject } from '@okode/plugin-testing-devkit';
 
 describe('sonar e2e', () => {
   const appName = uniq('test');

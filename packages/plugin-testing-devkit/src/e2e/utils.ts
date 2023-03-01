@@ -1,7 +1,6 @@
 import { cleanup, ensureNxProject, patchPackageJsonForPlugin, runPackageManagerInstall, tmpProjPath } from '@nrwl/nx-plugin/testing';
 import { execSync } from 'child_process';
-import { joinPathFragments, readJsonFile, workspaceRoot, writeJsonFile } from '@nrwl/devkit';
-import { getPackageManagerCommand } from '@nrwl/devkit';
+import { joinPathFragments, readJsonFile, workspaceRoot, writeJsonFile, getPackageManagerCommand } from '@nrwl/devkit';
 import { dirname, join } from 'path';
 import { ensureDirSync } from 'fs-extra'
 
@@ -33,7 +32,7 @@ export function getNxVersion(): string {
     joinPathFragments(workspaceRoot, 'package.json')
   );
   return (
-    process.env.NX_VERSION ||
+    process.env['NX_VERSION'] ||
     pkgJson.dependencies['nx'] ||
     pkgJson.devDependencies['nx'] ||
     pkgJson.dependencies['@nrwl/workspace'] ||
@@ -71,7 +70,7 @@ function ensureNxProjects(projs: ProjectDist[]): void {
     ensureNxProject(projs[0].name, projs[0].path);
   } else {
     ensureDirSync(tmpProjPath())
-    runNxNewCommand(undefined, true);
+    runNxNewCommand();
     patchDistProjects(projs);
     for (const proj of projs) {
       patchPackageJsonForPlugin(proj.name, proj.path);
@@ -80,7 +79,7 @@ function ensureNxProjects(projs: ProjectDist[]): void {
   }
 }
 
-function runNxNewCommand(args?: string, silent?: boolean) {
+function runNxNewCommand(args?: string) {
   const localTmpDir = dirname(tmpProjPath())
   return execSync(
     `node ${require.resolve(
@@ -90,7 +89,6 @@ function runNxNewCommand(args?: string, silent?: boolean) {
     }`,
     {
       cwd: localTmpDir,
-      ...(silent && false ? { stdio: ['ignore', 'ignore', 'ignore'] } : {}),
     },
   )
 }
