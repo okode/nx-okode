@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.2](https://github.com/okode/nx-okode/compare/0.4.1...0.4.2) (2023-03-02)
+
+
+### Bug Fixes
+
+* project version ([2f207a2](https://github.com/okode/nx-okode/commit/2f207a2fae058d719cabb8b1b4cabf574a4ce22b))
+
 ## [0.4.1](https://github.com/okode/nx-okode/compare/0.4.0...0.4.1) (2023-03-02)
 
 
