@@ -28,6 +28,11 @@
       "description": "Enables verbose logging",
       "type": "boolean",
       "default": false
+    },
+    "dryRun": {
+      "description": "Enables dry run mode",
+      "type": "boolean",
+      "default": false
     }
   },
   "required": ["hostUrl", "config"]

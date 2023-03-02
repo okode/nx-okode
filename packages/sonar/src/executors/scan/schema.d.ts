@@ -4,4 +4,5 @@ export interface ScanExecutorSchema {
   autoSourcesDetection?: boolean;
   skipImplicitDeps?: boolean;
   verbose?: boolean;
+  dryRun?: boolean;
 }

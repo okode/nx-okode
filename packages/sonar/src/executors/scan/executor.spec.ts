@@ -3,8 +3,16 @@ import { ExecutorContext } from '@nrwl/devkit';
 import * as sonarScanner from 'sonarqube-scanner';
 
 describe('Sonar Scan Executor', () => {
+  const originalProcessEnv = process.env;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetModules()
+    process.env = { ...originalProcessEnv };
+  });
+
+  afterEach(() => {
+    process.env = originalProcessEnv;
   });
 
   it('should scan project and dependencies', async () => {
@@ -74,6 +82,7 @@ describe('Sonar Scan Executor', () => {
           "sonar.projectName": "test",
           "sonar.sources": "apps/app1/src",
           "sonar.tests": "apps/app1/src",
+          "sonar.projectVersion": "2"
         }
       });
     });
@@ -86,7 +95,8 @@ describe('Sonar Scan Executor', () => {
         "sonar.projectKey": "kkk",
         "sonar.projectName": "test",
         "sonar.sources": "src/**/*",
-        "sonar.tests": "test/**/*"
+        "sonar.tests": "test/**/*",
+        "sonar.projectVersion": "1.0.0"
       };
       await executor({
         hostUrl: 'http://localhost:9200',
@@ -101,12 +111,12 @@ describe('Sonar Scan Executor', () => {
           "sonar.projectName": "test",
           "sonar.sources": "apps/app1/src,src/**/*",
           "sonar.tests": "apps/app1/src,test/**/*",
+          "sonar.projectVersion": "1.0.0"
         }
       });
     });
 
     it('should scan project with the right scan options expanding option values sintaxis', async () => {
-
       const scanSpy = mockSonarScan(true);
 
       const scanConfig = {
@@ -129,11 +139,64 @@ describe('Sonar Scan Executor', () => {
           "sonar.projectName": "test",
           "sonar.sources": "apps/app1/src,src/**/*",
           "sonar.tests": "apps/app1/src,test/**/*",
-          "sonar.eslint.reportPaths": "lint-results/apps/app1/lint-results.json"
+          "sonar.eslint.reportPaths": "lint-results/apps/app1/lint-results.json",
+          "sonar.projectVersion": "2"
         }
       });
     });
-  })
+  });
+
+  describe('when env variables are used in options', () => {
+    it('should interpolate env variables', async () => {
+      process.env['PROJECT_KEY'] = 'myproject';
+      process.env['SONAR_HOST'] = 'http://localhost:9200';
+      const scanSpy = mockSonarScan(true);
+
+      const scanConfig = {
+        "sonar.projectKey": "$PROJECT_KEY",
+        "sonar.projectName": "$PROJECT_NAME", // Missing env variable
+        "sonar.sources": "src/**/*",
+        "sonar.tests": "test/**/*",
+      };
+      await executor({
+        hostUrl: '$SONAR_HOST',
+        config: scanConfig,
+        autoSourcesDetection: true
+      }, getMockExecutorContext());
+
+      expect(scanSpy).toHaveBeenCalledWith({
+        serverUrl: 'http://localhost:9200',
+        options: {
+          "sonar.projectKey": "myproject",
+          "sonar.projectName": "",
+          "sonar.sources": "apps/app1/src,src/**/*",
+          "sonar.tests": "apps/app1/src,test/**/*",
+          "sonar.projectVersion": "2"
+        }
+      });
+    });
+  });
+
+  describe('when "dryRun" option is enabled', () => {
+    it('should not run sonar scanner', async () => {
+      const scanSpy = mockSonarScan(true);
+
+      const scanConfig = {
+        "sonar.projectKey": "proj",
+        "sonar.projectName": "projName",
+        "sonar.sources": "src/**/*",
+        "sonar.tests": "test/**/*",
+      };
+      await executor({
+        hostUrl: 'http://localhost:4200/test',
+        config: scanConfig,
+        autoSourcesDetection: true,
+        dryRun: true
+      }, getMockExecutorContext());
+
+      expect(scanSpy).not.toHaveBeenCalled();
+    });
+  });
 });
 
 const getMockExecutorContext: () => ExecutorContext = () => ({

@@ -1,13 +1,15 @@
 import { ExecutorContext, logger } from 'nx/src/devkit-exports';
 import { ScanExecutorSchema } from './schema';
 import * as sonarScanner from 'sonarqube-scanner';
-import { AppInfo, getExecutedAppInfo } from '@okode/nx-plugin-devkit';
+import { AppInfo, getExecutedAppInfo, interpolateOptions } from '@okode/nx-plugin-devkit';
 
 export default async function runExecutor(options: ScanExecutorSchema, context: ExecutorContext) {
   logger.log('Executor ran for Sonar', options);
+
+  const interpolatedOptions = interpolateOptions(options);
   let success = true;
   try {
-    await scan(options, context);
+    await scan(interpolatedOptions, context);
   } catch (e) {
     logger.error(`The Sonar scan failed for project '${context.projectName}'. Error: ${e}`);
     success = false;
@@ -33,10 +35,12 @@ async function scan(options: ScanExecutorSchema, context: ExecutorContext) {
 
   logger.debug('Sonar scanner config', options.hostUrl, scannerOptions);
 
-  await sonarScanner.async({
-    serverUrl: options.hostUrl,
-    options: scannerOptions,
-  });
+  if (!options.dryRun) {
+    await sonarScanner.async({
+      serverUrl: options.hostUrl,
+      options: scannerOptions,
+    });
+  }
 }
 
 function mergeScannerOptsWithAppInfo(scannerOptions: Record<string, string>, appInfo: AppInfo) {
@@ -47,7 +51,8 @@ function mergeScannerOptsWithAppInfo(scannerOptions: Record<string, string>, app
   newScannerOpts['sonar.tests'] = `${appInfo.workspaceSources}${
     newScannerOpts['sonar.tests'] ? `,${newScannerOpts['sonar.tests']}` : ''
   }`;
-
+  newScannerOpts['sonar.projectVersion'] =
+    newScannerOpts['sonar.projectVersion'] ?? appInfo.workspaceVersion;
   return expandScannerOptions(newScannerOpts, appInfo);
 }
 

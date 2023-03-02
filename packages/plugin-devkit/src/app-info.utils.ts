@@ -16,6 +16,7 @@ export interface WorkspaceDependency {
 }
 
 export interface AppInfo {
+  workspaceVersion?: string;
   workspaceDependencies: WorkspaceDependency[];
   workspaceSources: string[];
 }
@@ -26,7 +27,8 @@ export async function getExecutedAppInfo(
 ): Promise<AppInfo> {
   const workspaceDependencies = await getExecutedAppWorkspaceDependencies(context, options);
   const workspaceSources = workspaceDependencies.map(d => d.sourceRoot);
-  return { workspaceDependencies, workspaceSources };
+  const workspaceVersion = context.workspace?.version ? String(context.workspace.version) : undefined;
+  return { workspaceDependencies, workspaceSources, workspaceVersion };
 }
 
 export async function getExecutedAppWorkspaceDependencies(
@@ -93,3 +95,4 @@ export function collectWorkspaceDependenciesByModule(
 
   return workspaceModuleDependencies;
 }
+
