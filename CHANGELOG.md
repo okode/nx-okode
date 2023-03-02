@@ -2,6 +2,13 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.1](https://github.com/okode/nx-okode/compare/0.4.0...0.4.1) (2023-03-02)
+
+
+### Bug Fixes
+
+* sonar ([0f49d52](https://github.com/okode/nx-okode/commit/0f49d520a1160161abe404ebf0ac79b66f3894ca))
+
 ## [0.4.0](https://github.com/okode/nx-okode/compare/0.3.0...0.4.0) (2023-03-02)
 
 
