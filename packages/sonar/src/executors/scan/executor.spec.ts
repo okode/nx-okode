@@ -4,6 +4,7 @@ import * as sonarScanner from 'sonarqube-scanner';
 
 describe('Sonar Scan Executor', () => {
   const originalProcessEnv = process.env;
+  const projectVersion = expect.anything();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -82,7 +83,7 @@ describe('Sonar Scan Executor', () => {
           "sonar.projectName": "test",
           "sonar.sources": "apps/app1/src",
           "sonar.tests": "apps/app1/src",
-          "sonar.projectVersion": "2"
+          "sonar.projectVersion": projectVersion
         }
       });
     });
@@ -109,7 +110,7 @@ describe('Sonar Scan Executor', () => {
             "sonar.projectName": "test",
             "sonar.sources": "apps/app1/src,src/**/*",
             "sonar.tests": "apps/app1/src",
-            "sonar.projectVersion": "2"
+            "sonar.projectVersion": projectVersion
           }
         });
       });
@@ -135,7 +136,7 @@ describe('Sonar Scan Executor', () => {
             "sonar.projectName": "test",
             "sonar.sources": "apps/app1/src",
             "sonar.tests": "apps/app1/src,test/**/*",
-            "sonar.projectVersion": "2"
+            "sonar.projectVersion": projectVersion
           }
         });
       });
@@ -192,7 +193,7 @@ describe('Sonar Scan Executor', () => {
             "sonar.sources": "apps/app1/src,src/**/*",
             "sonar.tests": "apps/app1/src,test/**/*",
             "sonar.eslint.reportPaths": "lint-results/apps/app1/lint-results.json",
-            "sonar.projectVersion": "2"
+            "sonar.projectVersion": projectVersion
           }
         });
       });
@@ -224,7 +225,7 @@ describe('Sonar Scan Executor', () => {
           "sonar.projectName": "",
           "sonar.sources": "apps/app1/src,src/**/*",
           "sonar.tests": "apps/app1/src,test/**/*",
-          "sonar.projectVersion": "2"
+          "sonar.projectVersion": projectVersion
         }
       });
     });

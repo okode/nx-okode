@@ -5,6 +5,8 @@ import {
   ExecutorContext,
   DependencyType,
   TargetConfiguration,
+  readJsonFile,
+  workspaceRoot,
 } from 'nx/src/devkit-exports';
 
 export interface WorkspaceDependency {
@@ -27,7 +29,7 @@ export async function getExecutedAppInfo(
 ): Promise<AppInfo> {
   const workspaceDependencies = await getExecutedAppWorkspaceDependencies(context, options);
   const workspaceSources = workspaceDependencies.map(d => d.sourceRoot);
-  const workspaceVersion = context.workspace?.version ? String(context.workspace.version) : undefined;
+  const workspaceVersion = getWorkspaceVersion();
   return { workspaceDependencies, workspaceSources, workspaceVersion };
 }
 
@@ -96,3 +98,7 @@ export function collectWorkspaceDependenciesByModule(
   return workspaceModuleDependencies;
 }
 
+export function getWorkspaceVersion(): string | undefined {
+  const pkgJson = readJsonFile(`${workspaceRoot}/package.json`);
+  return pkgJson?.version;
+}
