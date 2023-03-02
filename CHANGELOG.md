@@ -2,6 +2,20 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.4.0](https://github.com/okode/nx-okode/compare/0.3.0...0.4.0) (2023-03-02)
+
+
+### Features
+
+* **sonar:** interpolate options and implemented dryRun mode ([3f1a927](https://github.com/okode/nx-okode/commit/3f1a9277f3c4a3451ad077b6f8fb21b02daa96b6))
+
+
+### Bug Fixes
+
+* deploy root task ([f3c243c](https://github.com/okode/nx-okode/commit/f3c243c5048f01d20be1da54c851facc75accd78))
+* plugin testing devkit package ([d56826d](https://github.com/okode/nx-okode/commit/d56826d0cf5b7637b30ed96342ab384c2ec6fde2))
+* sonar-e2e ([7274000](https://github.com/okode/nx-okode/commit/72740009dd6f7f78dbb547f20cb571be0585afe6))
+
 ## [0.3.0](https://github.com/okode/nx-okode/compare/0.2.0...0.3.0) (2023-03-01)
 
 
