@@ -39,7 +39,7 @@ describe('Sonar Scan Executor', () => {
   });
 
   describe('when "autoSourcesDetection" is deactivated', () => {
-    it('should scan project with the right scan options', async () => {
+    it('should scan project with the provided scan config', async () => {
       const scanSpy = mockSonarScan(true);
 
       const scanConfig = {
@@ -87,61 +87,114 @@ describe('Sonar Scan Executor', () => {
       });
     });
 
-    it('should scan project with the right scan options adding extra source and test files', async () => {
+    describe('when project overrides an auto config value', () => {
+      it('should scan project with the right scan options adding extra sources', async () => {
+        const scanSpy = mockSonarScan(true);
 
-      const scanSpy = mockSonarScan(true);
-
-      const scanConfig = {
-        "sonar.projectKey": "kkk",
-        "sonar.projectName": "test",
-        "sonar.sources": "src/**/*",
-        "sonar.tests": "test/**/*",
-        "sonar.projectVersion": "1.0.0"
-      };
-      await executor({
-        hostUrl: 'http://localhost:9200',
-        config: scanConfig,
-        autoSourcesDetection: true
-      }, getMockExecutorContext());
-
-      expect(scanSpy).toHaveBeenCalledWith({
-        serverUrl: 'http://localhost:9200',
-        options: {
+        const scanConfig = {
           "sonar.projectKey": "kkk",
           "sonar.projectName": "test",
-          "sonar.sources": "apps/app1/src,src/**/*",
-          "sonar.tests": "apps/app1/src,test/**/*",
+          "sonar.sources": "src/**/*",
+        };
+        await executor({
+          hostUrl: 'http://localhost:9200',
+          config: scanConfig,
+          autoSourcesDetection: true
+        }, getMockExecutorContext());
+
+        expect(scanSpy).toHaveBeenCalledWith({
+          serverUrl: 'http://localhost:9200',
+          options: {
+            "sonar.projectKey": "kkk",
+            "sonar.projectName": "test",
+            "sonar.sources": "apps/app1/src,src/**/*",
+            "sonar.tests": "apps/app1/src",
+            "sonar.projectVersion": "2"
+          }
+        });
+      });
+
+      it('should scan project with the right scan options adding test files', async () => {
+        const scanSpy = mockSonarScan(true);
+
+        const scanConfig = {
+          "sonar.projectKey": "kkk",
+          "sonar.projectName": "test",
+          "sonar.tests": "test/**/*",
+        };
+        await executor({
+          hostUrl: 'http://localhost:9200',
+          config: scanConfig,
+          autoSourcesDetection: true
+        }, getMockExecutorContext());
+
+        expect(scanSpy).toHaveBeenCalledWith({
+          serverUrl: 'http://localhost:9200',
+          options: {
+            "sonar.projectKey": "kkk",
+            "sonar.projectName": "test",
+            "sonar.sources": "apps/app1/src",
+            "sonar.tests": "apps/app1/src,test/**/*",
+            "sonar.projectVersion": "2"
+          }
+        });
+      });
+
+      it('should scan project with the right scan options overriding project version', async () => {
+        const scanSpy = mockSonarScan(true);
+
+        const scanConfig = {
+          "sonar.projectKey": "kkk",
+          "sonar.projectName": "test",
           "sonar.projectVersion": "1.0.0"
-        }
+        };
+        await executor({
+          hostUrl: 'http://localhost:9200',
+          config: scanConfig,
+          autoSourcesDetection: true
+        }, getMockExecutorContext());
+
+        expect(scanSpy).toHaveBeenCalledWith({
+          serverUrl: 'http://localhost:9200',
+          options: {
+            "sonar.projectKey": "kkk",
+            "sonar.projectName": "test",
+            "sonar.sources": "apps/app1/src",
+            "sonar.tests": "apps/app1/src",
+            "sonar.projectVersion": "1.0.0"
+          }
+        });
       });
     });
 
-    it('should scan project with the right scan options expanding option values sintaxis', async () => {
-      const scanSpy = mockSonarScan(true);
+    describe('when option value has custom sintaxis to be expanded', () => {
+      it('should scan project with the right scan options', async () => {
+        const scanSpy = mockSonarScan(true);
 
-      const scanConfig = {
-        "sonar.projectKey": "kkk",
-        "sonar.projectName": "test",
-        "sonar.sources": "src/**/*",
-        "sonar.tests": "test/**/*",
-        "sonar.eslint.reportPaths": "[lint-results/{projectRoot}/lint-results.json]"
-      };
-      await executor({
-        hostUrl: 'http://localhost:9200',
-        config: scanConfig,
-        autoSourcesDetection: true
-      }, getMockExecutorContext());
-
-      expect(scanSpy).toHaveBeenCalledWith({
-        serverUrl: 'http://localhost:9200',
-        options: {
+        const scanConfig = {
           "sonar.projectKey": "kkk",
           "sonar.projectName": "test",
-          "sonar.sources": "apps/app1/src,src/**/*",
-          "sonar.tests": "apps/app1/src,test/**/*",
-          "sonar.eslint.reportPaths": "lint-results/apps/app1/lint-results.json",
-          "sonar.projectVersion": "2"
-        }
+          "sonar.sources": "src/**/*",
+          "sonar.tests": "test/**/*",
+          "sonar.eslint.reportPaths": "[lint-results/{projectRoot}/lint-results.json]"
+        };
+        await executor({
+          hostUrl: 'http://localhost:9200',
+          config: scanConfig,
+          autoSourcesDetection: true
+        }, getMockExecutorContext());
+
+        expect(scanSpy).toHaveBeenCalledWith({
+          serverUrl: 'http://localhost:9200',
+          options: {
+            "sonar.projectKey": "kkk",
+            "sonar.projectName": "test",
+            "sonar.sources": "apps/app1/src,src/**/*",
+            "sonar.tests": "apps/app1/src,test/**/*",
+            "sonar.eslint.reportPaths": "lint-results/apps/app1/lint-results.json",
+            "sonar.projectVersion": "2"
+          }
+        });
       });
     });
   });
