@@ -1,0 +1,199 @@
+version: 2.1
+
+shared: &shared
+  context: org-global
+  post-steps:
+    - slack/notify:
+        event: 'fail'
+        template: 'basic_fail_1'
+
+tags: &tags
+  context: org-global
+  filters:
+    branches:
+      ignore:
+        - /.*/
+    tags:
+      only:
+        - /.*/
+
+orbs:
+  slack: circleci/slack@4
+  node: circleci/node@5
+  cypress: cypress-io/cypress@2
+  docker: circleci/docker@2
+  okode: okode/common@2
+  browser-tools: circleci/browser-tools@1.3.0
+  nx: nrwl/nx@1.5.1
+
+executors:
+  cypresss-browser:
+    docker:
+      - image: 'cypress/browsers:latest'
+
+jobs:
+  test:
+    executor: okode/node-machine
+    steps:
+      - checkout
+      - node/install-packages
+      - nx/set-shas
+      - run:
+          command: npx nx run workspace:ci-test
+      - persist_to_workspace:
+          root: .
+          paths:
+           - coverage
+  lint:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - nx/set-shas
+      - run:
+          command: npx nx run workspace:ci-lint
+      - persist_to_workspace:
+          root: .
+          paths:
+            - lint-results
+  lighthouse-check:
+    executor: okode/node-machine
+    steps:
+      - checkout
+      - node/install-packages
+      - nx/set-shas
+      - browser-tools/install-chrome
+      - okode/vpn:
+          user: ${DIGITALHEALTH_VPN_USER}
+          password: ${DIGITALHEALTH_VPN_PASS}
+          config: ${DIGITALHEALTH_VPN_CONF}
+      - run:
+          command: |
+            sudo apt-get install hostsed
+            sudo hostsed add 10.10.81.20 img.gyoung.digital.dev.mapfredigitalhealth.com
+      - run:
+          command: npx nx run workspace:ci-lighthouse-check
+  sonar:
+    docker:
+      - image: 'node:latest'
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - checkout
+      - node/install-packages
+      - nx/set-shas
+      - run:
+          name: 'Add coverage and lint result files'
+          command: |
+            find /tmp/workspace -iname "lcov.info"
+            find /tmp/workspace -iname "lint-results.json"
+            mv /tmp/workspace/lint-results .
+            mv /tmp/workspace/coverage .
+            find /root/project/lint-results -type f -name "lint-results.json" -exec sed -i -- 's/\/home\/circleci\//\/root\//g' {} +
+      - run:
+          command: npx nx run workspace:ci-sonar
+  cypress-run:
+    parameters:
+      run-command:
+        description: Command
+        type: string
+        default: ''
+    executor: cypresss-browser
+    steps:
+      - checkout
+      - node/install-packages
+      - nx/set-shas
+      - run:
+          command: << parameters.run-command >>
+  storybook-publish:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - nx/set-shas
+      - run:
+          command: npx nx run workspace:ci-storybook-publish
+  release:
+    executor: okode/node-machine
+    steps:
+      - checkout
+      - node/install-packages
+      - okode/vpn:
+          user: ${DIGITALHEALTH_VPN_USER}
+          password: ${DIGITALHEALTH_VPN_PASS}
+          config: ${DIGITALHEALTH_VPN_CONF}
+      - run:
+          command: |
+            sudo apt-get install hostsed
+            sudo hostsed add 10.10.81.20 nexusregistry.internal.mapfredigitalhealth.com
+      - run:
+          command: WORKSPACE_VERSION=${CIRCLE_TAG} npx nx run workspace:ci-release
+
+workflows:
+  release:
+    # https://discuss.circleci.com/t/cant-trigger-workflow-on-git-tag-push-using-when-condition/43252/4
+    jobs:
+      - release:
+          << : *tags
+
+  main-build:
+    when:
+      and:
+        - equal: [ main, << pipeline.git.branch >> ]
+    jobs:
+      - test:
+          << : *shared
+      - lint:
+          << : *shared
+      - cypress-run:
+          << : *shared
+          name: e2e:percy
+          run-command: npx nx run workspace:ci-percy-e2e --env.grepTags=@only_front,@visual
+      - sonar:
+          << : *shared
+          requires:
+            - lint
+            - test
+            - e2e:percy
+      - storybook-publish:
+          << : *shared
+
+  default:
+    when:
+      and:
+        - not:
+            equal: [ main, << pipeline.git.branch >> ]
+    jobs:
+      - test:
+          << : *shared
+      - lint:
+          << : *shared
+      - cypress-run:
+          << : *shared
+          name: e2e:basic
+          run-command: npx nx run workspace:ci-percy-e2e --env.grepTags=@only_front --record false
+      - lighthouse-check:
+          << : *shared
+      - sonar:
+          << : *shared
+          requires:
+            - test
+            - lint
+            - e2e:basic
+      - code-quality:
+          << : *shared
+          type: approval
+          requires:
+            - sonar
+      - cypress-run:
+          << : *shared
+          name: e2e:percy
+          run-command: PERCY_PULL_REQUEST=${CIRCLE_PULL_REQUEST##*/} PERCY_COMMIT=${CIRCLE_SHA1} npx nx run workspace:ci-percy-e2e --env.grepTags=@only_front,@visual
+          requires:
+            - code-quality
+      - storybook-publish:
+          << : *shared
+          requires:
+            - code-quality
+
+
