@@ -1,0 +1,21 @@
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
+  "recommendations": [
+    // angular
+    "angular.ng-template",
+    // NX
+    "nrwl.angular-console",
+    // linting
+    "dbaeumer.vscode-eslint",
+    "sonarsource.sonarlint-vscode",
+    // formatter
+    "esbenp.prettier-vscode",
+    // utils
+    "shardulm94.trailing-spaces",
+    "exodiusstudios.comment-anchors",
+    // testing
+    "orta.vscode-jest",
+    // Docs
+    "unifiedjs.vscode-mdx"
+  ]
+}

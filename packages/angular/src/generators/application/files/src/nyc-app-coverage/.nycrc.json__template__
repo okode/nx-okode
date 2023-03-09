@@ -1,0 +1,4 @@
+{
+  "report-dir": "../../coverage/apps/<%= projectE2EName %>",
+  "reporter": ["json", "lcov"]
+}

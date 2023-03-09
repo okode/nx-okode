@@ -1,0 +1,25 @@
+{
+  // Editor & Format
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.rulers": [100],
+  "editor.unicodeHighlight.invisibleCharacters": true,
+  "files.trimTrailingWhitespace": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": false
+    },
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": false
+    },
+    "editor.formatOnSave": false
+  },
+  "js/ts.implicitProjectConfig.experimentalDecorators": true,
+  "typescript.preferences.quoteStyle": "single"
+}
