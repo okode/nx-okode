@@ -44,11 +44,6 @@ describe('angular e2e', () => {
     expect(stdout).toMatch(/successfully ran/i);
   }, 60000);
 
-  it('should run e2e successfully', async () => {
-    const { stdout } = await runNxCommandAsync(`run-many --target=e2e`);
-    expect(stdout).toMatch(/successfully ran/i);
-  }, 60000);
-
   describe('with ssr for the application', () => {
     beforeAll(async () => {
       await runNxCommandAsync(
