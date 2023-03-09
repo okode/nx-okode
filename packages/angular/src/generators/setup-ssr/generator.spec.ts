@@ -6,7 +6,7 @@ import { SetupSsrGeneratorSchema } from './schema';
 
 describe('setup-ssr generator', () => {
   let appTree: Tree;
-  const options: SetupSsrGeneratorSchema = { name: 'test' };
+  const options: SetupSsrGeneratorSchema = { appName: 'test' };
 
   beforeEach(() => {
     appTree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
