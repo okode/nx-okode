@@ -1,0 +1,67 @@
+{
+  "name": "lighthouse-ci",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/lighthouse-ci/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/lighthouse-ci",
+        "main": "packages/lighthouse-ci/src/index.ts",
+        "tsConfig": "packages/lighthouse-ci/tsconfig.lib.json",
+        "assets": [
+          "packages/lighthouse-ci/*.md",
+          {
+            "input": "./packages/lighthouse-ci/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/lighthouse-ci/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/lighthouse-ci",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/lighthouse-ci",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/lighthouse-ci/**/*.ts",
+          "packages/lighthouse-ci/generators.json",
+          "packages/lighthouse-ci/executors.json",
+          "packages/lighthouse-ci/package.json"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/lighthouse-ci/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

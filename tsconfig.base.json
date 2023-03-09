@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@okode/nx-angular": ["packages/angular/src/index.ts"],
+      "@okode/nx-lighthouse-ci": ["packages/lighthouse-ci/src/index.ts"],
       "@okode/nx-plugin-devkit": ["packages/plugin-devkit/src/index.ts"],
       "@okode/nx-plugin-testing-devkit": [
         "packages/plugin-testing-devkit/src/index.ts"
