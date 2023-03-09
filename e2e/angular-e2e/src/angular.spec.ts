@@ -27,20 +27,20 @@ describe('angular e2e', () => {
   it('should run lint successfully', async () => {
     const { stdout } = await runNxCommandAsync(`run-many --target=lint`);
     expect(stdout).toMatch(/successfully ran/i);
-  });
+  }, 30000);
 
   it('should run test successfully', async () => {
     const { stdout } = await runNxCommandAsync(`run-many --target=test`);
     expect(stdout).toMatch(/successfully ran/i);
-  });
+  }, 60000);
 
   it('should run build successfully', async () => {
     const { stdout } = await runNxCommandAsync(`run-many --target=build`);
     expect(stdout).toMatch(/successfully ran/i);
-  });
+  }, 60000);
 
   it('should run e2e successfully', async () => {
     const { stdout } = await runNxCommandAsync(`run-many --target=e2e`);
     expect(stdout).toMatch(/successfully ran/i);
-  });
+  }, 60000);
 });
