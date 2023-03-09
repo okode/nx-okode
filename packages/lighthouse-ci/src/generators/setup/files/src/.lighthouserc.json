@@ -1,0 +1,26 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 2,
+      "startServerCommand": "<%= serverCommand %>",
+      "url": ["http://localhost:4000?skipOneTrustScript=true&skipAnalyticsScript=true"],
+      "startServerReadyTimeout": 30000,
+      "settings": {
+        "preset": "desktop"
+      }
+    },
+    "assert": {
+      "includePassedAssertions": true,
+      "assertions": {
+        "categories:performance": ["warn", {"minScore": 0.8}],
+        "categories:accessibility": ["warn", {"minScore": 0.8}],
+        "categories:best-practices": ["warn", {"minScore": 0.8}] ,
+        "categories:seo": ["warn", {"minScore": 0.8}],
+        "categories:pwa": ["warn", {"minScore": 0.8}]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
