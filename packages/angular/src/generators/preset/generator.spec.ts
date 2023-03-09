@@ -9,7 +9,7 @@ describe('preset generator', () => {
   const options: PresetGeneratorSchema = { name: 'test' };
 
   beforeEach(() => {
-    appTree = createTreeWithEmptyWorkspace({layout: 'apps-libs'});
+    appTree = createTreeWithEmptyWorkspace({ layout: 'apps-libs' });
   });
 
   it('should run successfully', async () => {

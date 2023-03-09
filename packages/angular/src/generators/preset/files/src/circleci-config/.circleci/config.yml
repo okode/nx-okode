@@ -43,7 +43,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-           - coverage
+            - coverage
   lint:
     executor: node/default
     steps:
@@ -134,66 +134,64 @@ workflows:
     # https://discuss.circleci.com/t/cant-trigger-workflow-on-git-tag-push-using-when-condition/43252/4
     jobs:
       - release:
-          << : *tags
+          <<: *tags
 
   main-build:
     when:
       and:
-        - equal: [ main, << pipeline.git.branch >> ]
+        - equal: [main, << pipeline.git.branch >>]
     jobs:
       - test:
-          << : *shared
+          <<: *shared
       - lint:
-          << : *shared
+          <<: *shared
       - cypress-run:
-          << : *shared
+          <<: *shared
           name: e2e:percy
           run-command: npx nx run workspace:ci-percy-e2e --env.grepTags=@only_front,@visual
       - sonar:
-          << : *shared
+          <<: *shared
           requires:
             - lint
             - test
             - e2e:percy
       - storybook-publish:
-          << : *shared
+          <<: *shared
 
   default:
     when:
       and:
         - not:
-            equal: [ main, << pipeline.git.branch >> ]
+            equal: [main, << pipeline.git.branch >>]
     jobs:
       - test:
-          << : *shared
+          <<: *shared
       - lint:
-          << : *shared
+          <<: *shared
       - cypress-run:
-          << : *shared
+          <<: *shared
           name: e2e:basic
           run-command: npx nx run workspace:ci-percy-e2e --env.grepTags=@only_front --record false
       - lighthouse-check:
-          << : *shared
+          <<: *shared
       - sonar:
-          << : *shared
+          <<: *shared
           requires:
             - test
             - lint
             - e2e:basic
       - code-quality:
-          << : *shared
+          <<: *shared
           type: approval
           requires:
             - sonar
       - cypress-run:
-          << : *shared
+          <<: *shared
           name: e2e:percy
           run-command: PERCY_PULL_REQUEST=${CIRCLE_PULL_REQUEST##*/} PERCY_COMMIT=${CIRCLE_SHA1} npx nx run workspace:ci-percy-e2e --env.grepTags=@only_front,@visual
           requires:
             - code-quality
       - storybook-publish:
-          << : *shared
+          <<: *shared
           requires:
             - code-quality
-
-

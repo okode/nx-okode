@@ -5,6 +5,9 @@
     "declaration": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "src/generators/application/files/src/cypress-config/cypress.config.ts__template__"],
+  "include": [
+    "src/**/*.ts",
+    "src/generators/application/files/src/cypress-config/cypress.config.ts__template__"
+  ],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }

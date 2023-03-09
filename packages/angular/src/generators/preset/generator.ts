@@ -10,7 +10,10 @@ import {
   writeJson,
 } from '@nrwl/devkit';
 import { PresetGeneratorSchema } from './schema';
-import { convertDependenciesToObject, DEPENDENCIES } from '../../utils/dependencies';
+import {
+  convertDependenciesToObject,
+  DEPENDENCIES,
+} from '../../utils/dependencies';
 import applicationGenerator from '../application/generator';
 
 export default async function (tree: Tree, options: PresetGeneratorSchema) {
@@ -57,7 +60,9 @@ function addVscodeConfig(tree: Tree) {
     tree,
     joinPathFragments(__dirname, './files/src/vscode-config'),
     '.',
-    {}
+    {
+      template: ''
+    }
   );
 }
 
@@ -68,71 +73,86 @@ function addCicdConfig(tree: Tree) {
     '.',
     {}
   );
-  const projectConfiguration = readJson<ProjectConfiguration>(tree, 'project.json');
+  const projectConfiguration = readJson<ProjectConfiguration>(
+    tree,
+    'project.json'
+  );
   if (!projectConfiguration.targets['ci-test']) {
     projectConfiguration.targets['ci-test'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx affected --base=$NX_BASE --head=$NX_HEAD --target=test --configuration ci --coverageReporters lcov"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command:
+          'nx affected --base=$NX_BASE --head=$NX_HEAD --target=test --configuration ci --coverageReporters lcov',
+      },
     };
     projectConfiguration.targets['ci-lint'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx affected --base=$NX_BASE --head=$NX_HEAD --target=lint --outputFile {workspaceRoot}/lint-results/{projectRoot}/lint-results.json --format json"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command:
+          'nx affected --base=$NX_BASE --head=$NX_HEAD --target=lint --outputFile {workspaceRoot}/lint-results/{projectRoot}/lint-results.json --format json',
+      },
     };
     projectConfiguration.targets['ci-lighthouse-check'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx affected --base=$NX_BASE --head=$NX_HEAD --target=lighthouse-check"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command:
+          'nx affected --base=$NX_BASE --head=$NX_HEAD --target=lighthouse-check',
+      },
     };
     projectConfiguration.targets['ci-e2e'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx affected --base=$NX_BASE --head=$NX_HEAD --target=e2e --configuration ci"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command:
+          'nx affected --base=$NX_BASE --head=$NX_HEAD --target=e2e --configuration ci',
+      },
     };
     projectConfiguration.targets['ci-percy-e2e'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx affected --base=$NX_BASE --head=$NX_HEAD --target=percy-e2e --configuration ci"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command:
+          'nx affected --base=$NX_BASE --head=$NX_HEAD --target=percy-e2e --configuration ci',
+      },
     };
     projectConfiguration.targets['ci-sonar'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=sonar --verbose"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command:
+          'npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=sonar --verbose',
+      },
     };
     projectConfiguration.targets['ci-storybook-publish'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx affected --base=$NX_BASE --head=$NX_HEAD --target=storybook-publish"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command:
+          'nx affected --base=$NX_BASE --head=$NX_HEAD --target=storybook-publish',
+      },
     };
     projectConfiguration.targets['ci-release'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npx nx run-many --target=publish"
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command: 'npx nx run-many --target=publish',
+      },
     };
     writeJson(tree, 'project.json', projectConfiguration);
   }
 }
 
 function addSemver(tree: Tree) {
-  addDependenciesToPackageJson(tree, {}, convertDependenciesToObject([
-    DEPENDENCIES.semver,
-  ]));
+  addDependenciesToPackageJson(
+    tree,
+    {},
+    convertDependenciesToObject([DEPENDENCIES.semver])
+  );
   generateFiles(
     tree,
     joinPathFragments(__dirname, './files/src/semver-config'),
     '.',
     {}
   );
-  const projectConfiguration = readJson<ProjectConfiguration>(tree, 'project.json');
+  const projectConfiguration = readJson<ProjectConfiguration>(
+    tree,
+    'project.json'
+  );
   if (!projectConfiguration.targets.sonar) {
     projectConfiguration.targets.release = {
       executor: '@jscutlery/semver:version',
@@ -141,8 +161,8 @@ function addSemver(tree: Tree) {
         preset: 'conventional',
         skipProjectChangelog: true,
         tagPrefix: '',
-        push: true
-      }
+        push: true,
+      },
     };
     writeJson(tree, 'project.json', projectConfiguration);
   }
@@ -153,29 +173,37 @@ function setupEditorConfig(tree: Tree) {
     tree,
     joinPathFragments(__dirname, './files/src/editor-config'),
     '.',
-    {}
+    {
+      template: ''
+    }
   );
 }
 
 function setupPrettier(tree: Tree) {
-  addDependenciesToPackageJson(tree, {}, convertDependenciesToObject([
-    DEPENDENCIES.prettierEslint,
-    DEPENDENCIES.prettierEslint,
-  ]));
+  addDependenciesToPackageJson(
+    tree,
+    {},
+    convertDependenciesToObject([
+      DEPENDENCIES.prettierEslint,
+      DEPENDENCIES.eslintPluginPrettier,
+    ])
+  );
   generateFiles(
     tree,
     joinPathFragments(__dirname, './files/src/prettier-config'),
     '.',
-    {}
+    {
+      template: ''
+    }
   );
   const eslintConfigPath = '.eslintrc.json';
   const eslintConfig = readJson(tree, eslintConfigPath);
   eslintConfig.overrides?.push({
-    "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-    "rules": {
-      "prettier/prettier": "warn"
+    files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
+    rules: {
+      'prettier/prettier': 'warn',
     },
-    "extends": ["plugin:prettier/recommended"]
+    extends: ['plugin:prettier/recommended'],
   });
   writeJson(tree, eslintConfigPath, eslintConfig);
 }
@@ -184,25 +212,27 @@ function setupEslintRules(tree: Tree) {
   const eslintConfigPath = '.eslintrc.json';
   const eslintConfig = readJson(tree, eslintConfigPath);
   eslintConfig.overrides?.push({
-    "files": ["*.ts", "*.tsx"],
-    "rules": {
-      "@typescript-eslint/no-empty-function": [
-        "error",
+    files: ['*.ts', '*.tsx'],
+    rules: {
+      '@typescript-eslint/no-empty-function': [
+        'error',
         {
-          "allow": ["private-constructors"]
-        }
-      ]
-    }
+          allow: ['private-constructors'],
+        },
+      ],
+    },
   });
   writeJson(tree, eslintConfigPath, eslintConfig);
 }
 
 function addHusky(tree: Tree) {
-  addDependenciesToPackageJson(tree, {},
+  addDependenciesToPackageJson(
+    tree,
+    {},
     convertDependenciesToObject([
       DEPENDENCIES.husky,
       DEPENDENCIES.commitlintCli,
-      DEPENDENCIES.commitlintConfigConventional
+      DEPENDENCIES.commitlintConfigConventional,
     ])
   );
   generateFiles(
