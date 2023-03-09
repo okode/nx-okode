@@ -47,6 +47,14 @@ export const DEPENDENCIES = {
     name: 'cypress-replay',
     version: '~1.0.16',
   },
+  typescript: {
+    name: 'typescript',
+    version: '~4.9.5',
+  },
+  compression: {
+    name: 'compression',
+    version: '~1.7.4',
+  },
 } as const;
 
 export const convertDependenciesToObject = (

@@ -1,4 +1,9 @@
-import { runNxCommandAsync, uniq, cleanup } from '@nrwl/nx-plugin/testing';
+import {
+  runNxCommandAsync,
+  uniq,
+  checkFilesExist,
+  cleanup,
+} from '@nrwl/nx-plugin/testing';
 import { newProject } from '@okode/nx-plugin-testing-devkit';
 
 describe('angular e2e', () => {
@@ -43,4 +48,16 @@ describe('angular e2e', () => {
     const { stdout } = await runNxCommandAsync(`run-many --target=e2e`);
     expect(stdout).toMatch(/successfully ran/i);
   }, 60000);
+
+  describe('with ssr for the application', () => {
+    beforeAll(async () => {
+      await runNxCommandAsync(
+        `generate @okode/nx-angular:setup-ssr ${appName}`
+      );
+    }, 120000);
+
+    it('should set up ssr', async () => {
+      checkFilesExist(`apps/${appName}/server.ts`);
+    });
+  });
 });

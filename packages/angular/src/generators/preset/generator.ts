@@ -13,7 +13,7 @@ import { PresetGeneratorSchema } from './schema';
 import {
   convertDependenciesToObject,
   DEPENDENCIES,
-} from '../../utils/dependencies';
+} from '../../utils/dependencies.constants';
 import applicationGenerator from '../application/generator';
 
 export default async function (tree: Tree, options: PresetGeneratorSchema) {
@@ -61,7 +61,7 @@ function addVscodeConfig(tree: Tree) {
     joinPathFragments(__dirname, './files/src/vscode-config'),
     '.',
     {
-      template: ''
+      template: '',
     }
   );
 }
@@ -174,7 +174,7 @@ function setupEditorConfig(tree: Tree) {
     joinPathFragments(__dirname, './files/src/editor-config'),
     '.',
     {
-      template: ''
+      template: '',
     }
   );
 }
@@ -193,7 +193,7 @@ function setupPrettier(tree: Tree) {
     joinPathFragments(__dirname, './files/src/prettier-config'),
     '.',
     {
-      template: ''
+      template: '',
     }
   );
   const eslintConfigPath = '.eslintrc.json';

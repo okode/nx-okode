@@ -12,6 +12,11 @@
       "factory": "./src/generators/preset/generator",
       "schema": "./src/generators/preset/schema.json",
       "description": "preset generator"
+    },
+    "setup-ssr": {
+      "factory": "./src/generators/setup-ssr/generator",
+      "schema": "./src/generators/setup-ssr/schema.json",
+      "description": "setup-ssr generator"
     }
   }
 }
