@@ -17,6 +17,11 @@
       "factory": "./src/generators/setup-ssr/generator",
       "schema": "./src/generators/setup-ssr/schema.json",
       "description": "setup-ssr generator"
+    },
+    "setup-storybook": {
+      "factory": "./src/generators/setup-storybook/generator",
+      "schema": "./src/generators/setup-storybook/schema.json",
+      "description": "setup-storybook generator"
     }
   }
 }

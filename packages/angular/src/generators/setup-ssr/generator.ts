@@ -50,10 +50,7 @@ export default async function (tree: Tree, options: SetupSsrGeneratorSchema) {
 
 function addBasicServerConfig(tree: Tree, options: NormalizedSchema) {
   const pathToServerTs = getPathToServerTs(options);
-  const { ast, fileContents } = queryAngularTsFile(
-    tree,
-    getPathToServerTs(options)
-  );
+  const { ast, fileContents } = queryAngularTsFile(tree, pathToServerTs);
 
   const serverDeclarationNodes = tsquery(
     ast,

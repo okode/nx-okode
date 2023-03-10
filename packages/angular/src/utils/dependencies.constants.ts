@@ -55,6 +55,10 @@ export const DEPENDENCIES = {
     name: 'compression',
     version: '~1.7.4',
   },
+  storybookManagerWebpack5: {
+    name: '@storybook/manager-webpack5',
+    version: '~6.5.16',
+  },
 } as const;
 
 export const convertDependenciesToObject = (

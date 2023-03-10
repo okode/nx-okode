@@ -18,6 +18,7 @@ import {
   DEPENDENCIES,
 } from '../../utils/dependencies.constants';
 import { ApplicationGeneratorSchema } from './schema';
+import setupStorybook from '../setup-storybook/generator';
 
 interface NormalizedSchema extends ApplicationGeneratorSchema {
   projectName: string;
@@ -58,6 +59,7 @@ export default async function (
   });
   setupApplication(tree, normalizedOptions);
   setupE2EApplication(tree, normalizedOptions);
+  await setupStorybook(tree, { appName: options.name });
   await formatFiles(tree);
   return () => {
     installPackagesTask(tree);
