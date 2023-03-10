@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "$id": "SetupSsr",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "appName": {
+      "type": "string",
+      "description": "The name of the application to add Angular Universal (SSR) for.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What app would you like to add Angular Universal (SSR) for?",
+      "x-dropdown": "projects"
+    }
+  },
+  "required": ["appName"]
+}

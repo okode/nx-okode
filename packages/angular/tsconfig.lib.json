@@ -7,7 +7,9 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/generators/application/files/src/cypress-config/cypress.config.ts__template__"
+    "src/generators/application/files/src/cypress-config/cypress.config.ts__template__",
+    "src/generators/setup-ssr/files/src/server-interceptors/interceptors/response-logger.ts__template__",
+    "src/generators/setup-ssr/files/src/server-interceptors/interceptors/request-context.ts__template__"
   ],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }

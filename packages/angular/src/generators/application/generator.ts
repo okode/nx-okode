@@ -16,7 +16,7 @@ import {
 import {
   convertDependenciesToObject,
   DEPENDENCIES,
-} from '../../utils/dependencies';
+} from '../../utils/dependencies.constants';
 import { ApplicationGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends ApplicationGeneratorSchema {
@@ -104,14 +104,14 @@ function setupCypressConfig(tree: Tree, options: NormalizedSchema) {
   if (tree.exists(supportE2EFile)) {
     let supportE2E = tree.read(supportE2EFile).toString('utf-8');
     supportE2E +=
-      "\nimport '@cypress/code-coverage/support';"+
+      "\nimport '@cypress/code-coverage/support';" +
       "\nimport '@testing-library/cypress/add-commands';" +
       "\nimport '@percy/cypress';" +
       "\nimport 'cypress-real-events/support';" +
-      "\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment" +
-      "\n// @ts-ignore" +
+      '\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment' +
+      '\n// @ts-ignore' +
       "\nimport registerCypressGrep from '@cypress/grep';" +
-      "\nregisterCypressGrep();";
+      '\nregisterCypressGrep();';
     tree.write(supportE2EFile, supportE2E);
   }
   // Update tsconfig
