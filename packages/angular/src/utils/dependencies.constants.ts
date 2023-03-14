@@ -61,6 +61,10 @@ export const DEPENDENCIES = {
   },
 } as const;
 
+export const NX_DEPENDENCIES = {
+  storybook: '@nrwl/storybook',
+};
+
 export const convertDependenciesToObject = (
   deps: { name: string; version: string }[]
 ) => {

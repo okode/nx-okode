@@ -1,13 +1,15 @@
 import {
   addDependenciesToPackageJson,
-  formatFiles,
   generateFiles,
+  getPackageManagerCommand,
   getWorkspaceLayout,
   installPackagesTask,
   joinPathFragments,
   names,
+  NX_VERSION,
   readJson,
   Tree,
+  workspaceRoot,
   writeJson,
 } from '@nrwl/devkit';
 import { SetupStorybookGeneratorSchema } from './schema';
@@ -15,11 +17,14 @@ import { storybookConfigurationGenerator } from '@nrwl/angular/generators';
 import {
   convertDependenciesToObject,
   DEPENDENCIES,
+  NX_DEPENDENCIES,
 } from '../../utils/dependencies.constants';
 import { tsquery } from '@phenomnomnominal/tsquery';
 import { queryAngularTsFile } from '../../utils/tsquery.utils';
 import { Linter } from '@nrwl/linter';
 import { ArrayLiteralExpression } from 'typescript';
+import { execSync } from 'child_process';
+import { formatProjectFiles } from '@okode/nx-plugin-devkit';
 
 interface NormalizedSchema extends SetupStorybookGeneratorSchema {
   projectName: string;
@@ -44,6 +49,9 @@ export default async function (
   options: SetupStorybookGeneratorSchema
 ) {
   const normalizedOptions = normalizeOptions(tree, options);
+  const pmc = getPackageManagerCommand();
+  const installDevDepsCmd = `${pmc.addDev} --save-exact ${NX_DEPENDENCIES.storybook}@${NX_VERSION}`;
+  execSync(installDevDepsCmd, { cwd: workspaceRoot, stdio: [0, 1, 2] });
   await storybookConfigurationGenerator(tree, {
     name: options.appName,
     tsConfiguration: true,
@@ -56,7 +64,7 @@ export default async function (
   addStorybookConfig(tree, normalizedOptions);
   updateStorybookMainFile(tree, normalizedOptions);
   updateStorybookTsconfig(tree, normalizedOptions);
-  await formatFiles(tree);
+  await formatProjectFiles(tree, [normalizedOptions.projectName]);
   return () => {
     installPackagesTask(tree);
   };
@@ -66,7 +74,9 @@ function addStorybookDependencies(tree: Tree) {
   addDependenciesToPackageJson(
     tree,
     {},
-    convertDependenciesToObject([DEPENDENCIES.storybookManagerWebpack5])
+    {
+      ...convertDependenciesToObject([DEPENDENCIES.storybookManagerWebpack5]),
+    }
   );
   // Override dependencies for compatibility (REVIEW when storybook 7 is released)
   const packageJson = readJson(tree, 'package.json');
@@ -105,10 +115,11 @@ function updateStorybookMainFile(tree: Tree, options: NormalizedSchema) {
     (node) => {
       const stories = node as ArrayLiteralExpression;
       const text = stories.getText();
+      // TODO: review
       return `${text.slice(
         0,
         text.length - 1
-      )}, '../../../libs/**/*.stories.mdx',
+      )} '../../../libs/**/*.stories.mdx',
     '../../../libs/**/*.stories.@(js|jsx|ts|tsx)',
     'docs/**/*.stories.mdx']`;
     },

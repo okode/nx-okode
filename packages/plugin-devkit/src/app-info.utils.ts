@@ -27,8 +27,11 @@ export async function getExecutedAppInfo(
   context: ExecutorContext,
   options: { skipImplicitDeps: boolean }
 ): Promise<AppInfo> {
-  const workspaceDependencies = await getExecutedAppWorkspaceDependencies(context, options);
-  const workspaceSources = workspaceDependencies.map(d => d.sourceRoot);
+  const workspaceDependencies = await getExecutedAppWorkspaceDependencies(
+    context,
+    options
+  );
+  const workspaceSources = workspaceDependencies.map((d) => d.sourceRoot);
   const workspaceVersion = getWorkspaceVersion();
   return { workspaceDependencies, workspaceSources, workspaceVersion };
 }
@@ -37,8 +40,10 @@ export async function getExecutedAppWorkspaceDependencies(
   context: ExecutorContext,
   options: { skipImplicitDeps: boolean }
 ) {
-  const appDependencies = (await getWorkspaceDependenciesByAppName(context.projectName)).filter(
-    d => !(options.skipImplicitDeps && d.type === DependencyType.implicit)
+  const appDependencies = (
+    await getWorkspaceDependenciesByAppName(context.projectName)
+  ).filter(
+    (d) => !(options.skipImplicitDeps && d.type === DependencyType.implicit)
   );
   const projectConfiguration = context.workspace.projects[context.projectName];
   return [
@@ -77,9 +82,9 @@ export function collectWorkspaceDependenciesByModule(
   }
 
   const workspaceDirectModuleDependencies = directModuleDependencies.filter(
-    d => !d.target.startsWith('npm:')
+    (d) => !d.target.startsWith('npm:')
   );
-  workspaceDirectModuleDependencies.forEach(d => {
+  workspaceDirectModuleDependencies.forEach((d) => {
     workspaceModuleDependencies.set(d.target, {
       name: d.target,
       type: d.type,

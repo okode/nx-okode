@@ -1,6 +1,5 @@
 import {
   addDependenciesToPackageJson,
-  formatFiles,
   generateFiles,
   getWorkspaceLayout,
   installPackagesTask,
@@ -16,6 +15,7 @@ import {
 } from '../../utils/dependencies.constants';
 import { tsquery } from '@phenomnomnominal/tsquery';
 import { queryAngularTsFile } from '../../utils/tsquery.utils';
+import { formatProjectFiles } from '@okode/nx-plugin-devkit';
 
 interface NormalizedSchema extends SetupSsrGeneratorSchema {
   projectName: string;
@@ -42,7 +42,7 @@ export default async function (tree: Tree, options: SetupSsrGeneratorSchema) {
   });
   addBasicServerConfig(tree, normalizedOptions);
   addServerMiddlewares(tree, normalizedOptions);
-  await formatFiles(tree);
+  await formatProjectFiles(tree, [normalizedOptions.projectName]);
   return () => {
     installPackagesTask(tree);
   };

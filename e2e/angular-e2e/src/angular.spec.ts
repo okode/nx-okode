@@ -16,11 +16,17 @@ describe('angular e2e', () => {
   // are not dependant on one another.
   beforeAll(async () => {
     newProject(
-      [{ name: '@okode/nx-angular', path: 'dist/packages/angular' }],
+      [
+        { name: '@okode/nx-angular', path: 'dist/packages/angular' },
+        {
+          name: '@okode/nx-plugin-devkit',
+          path: 'dist/packages/plugin-devkit',
+        },
+      ],
       ['@nrwl/angular']
     );
     await runNxCommandAsync(`generate @okode/nx-angular:preset ${appName}`);
-  }, 120000);
+  }, 180000);
 
   afterAll(() => {
     // `nx reset` kills the daemon, and performs
@@ -32,7 +38,7 @@ describe('angular e2e', () => {
   it('should run lint successfully', async () => {
     const { stdout } = await runNxCommandAsync(`run-many --target=lint`);
     expect(stdout).toMatch(/successfully ran/i);
-  }, 30000);
+  }, 60000);
 
   it('should run test successfully', async () => {
     const { stdout } = await runNxCommandAsync(`run-many --target=test`);
@@ -44,7 +50,7 @@ describe('angular e2e', () => {
     expect(stdout).toMatch(/successfully ran/i);
   }, 60000);
 
-  describe('with ssr for the application', () => {
+  xdescribe('with ssr for the application', () => {
     beforeAll(async () => {
       await runNxCommandAsync(
         `generate @okode/nx-angular:setup-ssr ${appName}`

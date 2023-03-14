@@ -1,5 +1,8 @@
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
-import { readProjectConfiguration, addProjectConfiguration } from '@nrwl/devkit';
+import {
+  readProjectConfiguration,
+  addProjectConfiguration,
+} from '@nrwl/devkit';
 import setupSonar from './generator';
 
 describe('Setup sonar generator', () => {
@@ -9,7 +12,7 @@ describe('Setup sonar generator', () => {
       appName: 'my-app',
       sonarHostUrl: 'sonar.url.com',
       sonarProjectKey: 'my-app-key',
-      sonarProjectName: 'test'
+      sonarProjectName: 'test',
     });
     expect(
       readProjectConfiguration(appTree, 'my-app').targets.sonar
@@ -23,7 +26,7 @@ describe('Setup sonar generator', () => {
       appName: 'my-app',
       sonarHostUrl: 'sonar.url.com',
       sonarProjectKey: 'my-app-key',
-      sonarProjectName: 'test'
+      sonarProjectName: 'test',
     });
     expect(appTree.read('.gitignore').toString()).toContain('.scannerwork');
   });

@@ -6,10 +6,7 @@ import {
 } from '@nrwl/devkit';
 import { SetupSonarGeneratorSchema } from './schema';
 
-export default async function(
-  tree: Tree,
-  options: SetupSonarGeneratorSchema
-) {
+export default async function (tree: Tree, options: SetupSonarGeneratorSchema) {
   updateGitIgnore(tree);
   updateProjectConfig(tree, options);
   await formatFiles(tree);
@@ -21,14 +18,17 @@ function updateGitIgnore(tree: Tree): void {
   if (tree.exists(ignoreFile)) {
     let gitIgnore = tree.read('.gitignore').toString('utf-8');
     if (!gitIgnore.includes('# Sonar (nx-sonar setup generator)')) {
-      gitIgnore += '\n# Sonar (nx-sonar setup generator)\n.scannerwork\n.sonar/';
+      gitIgnore +=
+        '\n# Sonar (nx-sonar setup generator)\n.scannerwork\n.sonar/';
       tree.write(ignoreFile, gitIgnore);
     }
   }
 }
 
-function updateProjectConfig(tree: Tree,
-  options: SetupSonarGeneratorSchema): void {
+function updateProjectConfig(
+  tree: Tree,
+  options: SetupSonarGeneratorSchema
+): void {
   const projectConfiguration = readProjectConfiguration(tree, options.appName);
   if (projectConfiguration.targets.sonar) {
     throw new Error(
@@ -42,7 +42,7 @@ function updateProjectConfig(tree: Tree,
         config: {
           'sonar.projectKey': options.sonarProjectKey ?? '',
           'sonar.projectName': options.sonarProjectName ?? '',
-        }
+        },
       },
     };
     updateProjectConfiguration(tree, options.appName, projectConfiguration);

@@ -1,7 +1,6 @@
 import { applicationGenerator } from '@nrwl/angular/generators';
 import {
   addDependenciesToPackageJson,
-  formatFiles,
   generateFiles,
   getWorkspaceLayout,
   installPackagesTask,
@@ -19,6 +18,7 @@ import {
 } from '../../utils/dependencies.constants';
 import { ApplicationGeneratorSchema } from './schema';
 import setupStorybook from '../setup-storybook/generator';
+import { formatProjectFiles } from '@okode/nx-plugin-devkit';
 
 interface NormalizedSchema extends ApplicationGeneratorSchema {
   projectName: string;
@@ -60,7 +60,10 @@ export default async function (
   setupApplication(tree, normalizedOptions);
   setupE2EApplication(tree, normalizedOptions);
   await setupStorybook(tree, { appName: options.name });
-  await formatFiles(tree);
+  await formatProjectFiles(tree, [
+    normalizedOptions.projectName,
+    normalizedOptions.projectE2EName,
+  ]);
   return () => {
     installPackagesTask(tree);
   };

@@ -1,6 +1,5 @@
 import {
   addDependenciesToPackageJson,
-  formatFiles,
   generateFiles,
   installPackagesTask,
   joinPathFragments,
@@ -15,6 +14,7 @@ import {
   DEPENDENCIES,
 } from '../../utils/dependencies.constants';
 import applicationGenerator from '../application/generator';
+import { formatAllFiles } from '@okode/nx-plugin-devkit';
 
 export default async function (tree: Tree, options: PresetGeneratorSchema) {
   await applicationGenerator(tree, {
@@ -29,7 +29,7 @@ export default async function (tree: Tree, options: PresetGeneratorSchema) {
   setupPrettier(tree);
   setupEslintRules(tree);
   addHusky(tree);
-  await formatFiles(tree);
+  await formatAllFiles(tree);
   return () => {
     installPackagesTask(tree);
   };

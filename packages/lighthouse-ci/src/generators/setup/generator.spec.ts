@@ -1,5 +1,8 @@
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
-import { readProjectConfiguration, addProjectConfiguration } from '@nrwl/devkit';
+import {
+  readProjectConfiguration,
+  addProjectConfiguration,
+} from '@nrwl/devkit';
 import setupLighthouse from './generator';
 
 describe('Setup lighthouse ci generator', () => {

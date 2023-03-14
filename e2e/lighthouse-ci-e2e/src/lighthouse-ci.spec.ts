@@ -17,12 +17,19 @@ describe('lighouse ci e2e', () => {
   beforeAll(async () => {
     newProject(
       [
-        { name: '@okode/nx-lighthouse-ci', path: 'dist/packages/lighthouse-ci' }
+        {
+          name: '@okode/nx-lighthouse-ci',
+          path: 'dist/packages/lighthouse-ci',
+        },
       ],
       ['@nrwl/angular']
     );
-    await runNxCommandAsync(`generate @nrwl/angular:application ${appName} --routing true --style scss --standalone false`);
-    await runNxCommandAsync(`generate @okode/nx-lighthouse-ci:setup ${appName}`);
+    await runNxCommandAsync(
+      `generate @nrwl/angular:application ${appName} --routing true --style scss --standalone false`
+    );
+    await runNxCommandAsync(
+      `generate @okode/nx-lighthouse-ci:setup ${appName}`
+    );
   }, 120000);
 
   afterAll(() => {

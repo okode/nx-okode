@@ -28,7 +28,7 @@ function normalizeOptions(
   };
 }
 
-export default async function(
+export default async function (
   tree: Tree,
   options: SetupLighthouseCIGeneratorSchema
 ) {
@@ -43,8 +43,11 @@ function updateGitIgnore(tree: Tree): void {
   const ignoreFile = '.gitignore';
   if (tree.exists(ignoreFile)) {
     let gitIgnore = tree.read('.gitignore').toString('utf-8');
-    if (!gitIgnore.includes('# Lighthouse CI (nx-lighthouse-ci setup generator)')) {
-      gitIgnore += '\n# Lighthouse CI (nx-lighthouse-ci setup generator)\n.lighthouseci';
+    if (
+      !gitIgnore.includes('# Lighthouse CI (nx-lighthouse-ci setup generator)')
+    ) {
+      gitIgnore +=
+        '\n# Lighthouse CI (nx-lighthouse-ci setup generator)\n.lighthouseci';
       tree.write(ignoreFile, gitIgnore);
     }
   }
@@ -56,13 +59,15 @@ function addLighthouseConfig(tree: Tree, options: NormalizedSchema): void {
     joinPathFragments(__dirname, './files/src'),
     options.projectRoot,
     {
-      serverCommand: options.serverCommand ?? 'YOUR_APP_SERVER_COMMAND'
+      serverCommand: options.serverCommand ?? 'YOUR_APP_SERVER_COMMAND',
     }
   );
 }
 
-function updateProjectConfig(tree: Tree,
-  options: SetupLighthouseCIGeneratorSchema): void {
+function updateProjectConfig(
+  tree: Tree,
+  options: SetupLighthouseCIGeneratorSchema
+): void {
   const projectConfiguration = readProjectConfiguration(tree, options.appName);
   if (projectConfiguration.targets['lighthouse-ci-check']) {
     throw new Error(
@@ -70,10 +75,10 @@ function updateProjectConfig(tree: Tree,
     );
   } else {
     projectConfiguration.targets['lighthouse-ci-check'] = {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": `npx @lhci/cli autorun --config apps/${options.appName}/.lighthouserc.json`
-      }
+      executor: 'nx:run-commands',
+      options: {
+        command: `npx @lhci/cli autorun --config apps/${options.appName}/.lighthouserc.json`,
+      },
     };
     updateProjectConfiguration(tree, options.appName, projectConfiguration);
   }

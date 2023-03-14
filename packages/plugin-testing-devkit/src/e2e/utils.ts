@@ -1,8 +1,20 @@
-import { cleanup, ensureNxProject, patchPackageJsonForPlugin, runPackageManagerInstall, tmpProjPath } from '@nrwl/nx-plugin/testing';
+import {
+  cleanup,
+  ensureNxProject,
+  patchPackageJsonForPlugin,
+  runPackageManagerInstall,
+  tmpProjPath,
+} from '@nrwl/nx-plugin/testing';
 import { execSync } from 'child_process';
-import { joinPathFragments, readJsonFile, workspaceRoot, writeJsonFile, getPackageManagerCommand } from '@nrwl/devkit';
+import {
+  joinPathFragments,
+  readJsonFile,
+  workspaceRoot,
+  writeJsonFile,
+  getPackageManagerCommand,
+} from '@nrwl/devkit';
 import { dirname, join } from 'path';
-import { ensureDirSync } from 'fs-extra'
+import { ensureDirSync } from 'fs-extra';
 
 interface Package {
   name: string;
@@ -42,7 +54,7 @@ export function getNxVersion(): string {
 }
 
 function addNxPackages(pkgs?: string[]) {
-  const nxPkgs = pkgs?.map(name => {
+  const nxPkgs = pkgs?.map((name) => {
     const version = getNxVersion();
     return { name, version };
   });
@@ -50,7 +62,9 @@ function addNxPackages(pkgs?: string[]) {
 }
 
 function addPackages(packages?: Package[]) {
-  if (!packages || packages.length == 0) { return; }
+  if (!packages || packages.length == 0) {
+    return;
+  }
 
   const pm = getPackageManagerCommand();
   const pkgsWithVersions = packages
@@ -69,7 +83,7 @@ function ensureNxProjects(projs: ProjectDist[]): void {
   if (projs?.length === 1) {
     ensureNxProject(projs[0].name, projs[0].path);
   } else {
-    ensureDirSync(tmpProjPath())
+    ensureDirSync(tmpProjPath());
     runNxNewCommand();
     patchDistProjects(projs);
     for (const proj of projs) {
@@ -80,31 +94,34 @@ function ensureNxProjects(projs: ProjectDist[]): void {
 }
 
 function runNxNewCommand(args?: string) {
-  const localTmpDir = dirname(tmpProjPath())
+  const localTmpDir = dirname(tmpProjPath());
   return execSync(
     `node ${require.resolve(
-      '@nrwl/tao',
+      '@nrwl/tao'
     )} new proj --nx-workspace-root=${localTmpDir} --no-interactive --skip-install --collection=@nrwl/workspace --npmScope=proj --preset=empty ${
       args || ''
     }`,
     {
       cwd: localTmpDir,
-    },
-  )
+    }
+  );
 }
 
 function patchDistProjects(projs: ProjectDist[]): void {
-  projs.forEach(proj => {
+  projs.forEach((proj) => {
     const absDistPath = join(process.cwd(), proj.path);
     const absPackageJson = join(absDistPath, 'package.json');
     const packageJson = readJsonFile(absPackageJson);
     const packageDeps = packageJson?.dependencies ?? {};
-    projs.forEach(pkg => {
-      const absDistPath = `file:/${join(process.cwd(), pkg.path)}`
+    projs.forEach((pkg) => {
+      const absDistPath = `file:/${join(process.cwd(), pkg.path)}`;
       if (packageDeps[pkg.name] && packageDeps[pkg.name] !== absDistPath) {
         packageDeps[pkg.name] = absDistPath;
       }
     });
-    writeJsonFile(absPackageJson, { ...packageJson, dependencies: packageDeps })
+    writeJsonFile(absPackageJson, {
+      ...packageJson,
+      dependencies: packageDeps,
+    });
   });
 }

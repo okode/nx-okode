@@ -48,9 +48,8 @@ workflows:
   default:
     jobs:
       - test:
-          << : *shared
+          <<: *shared
       - deploy:
-          << : *tags
+          <<: *tags
           requires:
             - test
-
