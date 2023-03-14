@@ -31,7 +31,7 @@ jobs:
       - run:
           command: npx nx run-many --target test
       - run:
-          command: npx nx run-many --target e2e
+          command: npx nx run-many --target e2e --parallel 1
 
   deploy:
     executor: node/default
