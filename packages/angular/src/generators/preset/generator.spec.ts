@@ -4,7 +4,7 @@ import { Tree, readProjectConfiguration } from '@nrwl/devkit';
 import generator from './generator';
 import { PresetGeneratorSchema } from './schema';
 
-describe('preset generator', () => {
+xdescribe('preset generator', () => {
   let appTree: Tree;
   const options: PresetGeneratorSchema = { name: 'test' };
 

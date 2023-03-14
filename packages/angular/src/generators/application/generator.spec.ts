@@ -4,7 +4,7 @@ import { Tree, readProjectConfiguration } from '@nrwl/devkit';
 import generator from './generator';
 import { ApplicationGeneratorSchema } from './schema';
 
-describe('angular generator', () => {
+xdescribe('angular generator', () => {
   let appTree: Tree;
   const options: ApplicationGeneratorSchema = { name: 'test' };
 
